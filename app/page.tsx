@@ -1,5 +1,8 @@
 import Image from "next/image";
 import { units, J, C, pillars, stages, faq } from "./data";
+import Enhance from "./enhance";
+import LeadForm from "./lead-form";
+import Rich from "./rich";
 
 const Arrow = () => (
   <svg className="arr" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
@@ -17,6 +20,12 @@ const IgIcon = () => (
     <rect x="3" y="3" width="18" height="18" rx="5.2" fill="none" stroke="currentColor" strokeWidth="2" />
     <circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" strokeWidth="2" />
     <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" />
+  </svg>
+);
+const ClockIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2" />
+    <path d="M12 7v5l3 2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 const PinIcon = () => (
@@ -73,11 +82,14 @@ export default function Home() {
               <p className="lead">
                 Uma educação que acolhe, ensina, inspira e prepara para o futuro — da Educação Infantil ao Ensino Médio.
               </p>
+              <p className="lead-seo">
+                <strong>Educação Infantil, Ensino Fundamental e Ensino Médio</strong> em <strong>Tangará da Serra (MT)</strong>, com <strong>Sistema COC</strong>, <strong>ensino bilíngue</strong> e <strong>robótica</strong>.
+              </p>
               <ul className="values" aria-label="Valores">
                 <li>Acolhimento</li><li>Conhecimento</li><li>Protagonismo</li>
               </ul>
               <div className="actions">
-                <a className="btn btn-lime" href="#visita">Agende uma visita <Arrow /></a>
+                <a className="btn btn-lime btn-pulse" href="#visita">Agende uma visita <Arrow /></a>
                 <a className="btn btn-ghost" href="#etapas">Conheça as etapas</a>
               </div>
             </div>
@@ -86,6 +98,27 @@ export default function Home() {
               <figcaption><span className="badge-15">15<small>anos</small></span> Juntos, avançamos mais!</figcaption>
             </figure>
           </div>
+          <nav className="finder container" aria-labelledby="finder-title">
+            <h2 id="finder-title">Qual etapa você procura?</h2>
+            <ul>
+              {[
+                ["g1", "Berçário", "G1", "junior"],
+                ["infantil", "Educação Infantil", "G2 ao G5", "junior"],
+                ["fund1", "Fundamental I", "1º ao 5º ano", "junior"],
+                ["fund2", "Fundamental II", "6º ao 9º ano", "colegio"],
+                ["medio", "Ensino Médio", "1ª a 3ª série", "colegio"],
+              ].map(([id, t, s, u]) => (
+                <li key={id}>
+                  <a href={`#${id}`}>
+                    <strong>{t}</strong>
+                    <span>{s}</span>
+                    <em>{u === "junior" ? "Avance Júnior" : "Avance Colégio e Cursos"}</em>
+                    <Arrow />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
           <ul className="facts container" aria-label="Diferenciais">
             <li><strong>Sistema COC</strong><span>Solução educacional alinhada à BNCC</span></li>
             <li><strong>Ensino bilíngue</strong><span>Simple Education, 5x por semana</span></li>
@@ -100,6 +133,9 @@ export default function Home() {
             <div>
               <p className="eyebrow">Nossa essência</p>
               <h2 id="h-essencia">Somos um time. <span>Juntos, avançamos mais!</span></h2>
+              <p className="seo-intro">
+                O Avance é um <strong>colégio em Tangará da Serra</strong>, em Mato Grosso, com duas unidades: o <strong>Avance Júnior</strong> (Educação Infantil e Ensino Fundamental I) e o <strong>Avance Colégio e Cursos</strong> (Ensino Fundamental II, Ensino Médio e Cursos).
+              </p>
               <p>
                 Uma escola se constrói com pessoas, parceria e propósito. Acreditamos que a relação entre escola, estudantes e famílias fortalece a trajetória de aprendizagem e contribui para uma comunidade escolar acolhedora, participativa e comprometida com o desenvolvimento de cada aluno.
               </p>
@@ -119,8 +155,9 @@ export default function Home() {
         {/* ETAPAS */}
         <section className="section stages" id="etapas" aria-labelledby="h-etapas">
           <div className="container">
-            <p className="eyebrow">Educação Infantil ao Ensino Médio</p>
-            <h2 id="h-etapas">No Avance, cada etapa é uma oportunidade de <span>descobrir, aprender e ir além.</span></h2>
+            <p className="eyebrow">Etapas de ensino</p>
+            <h2 id="h-etapas">Educação Infantil ao Ensino Médio em <span>Tangará da Serra.</span></h2>
+            <p className="sec-lead">No Avance, cada etapa é uma oportunidade de descobrir, aprender e ir além.</p>
             <nav className="chips" aria-label="Ir para a etapa">
               {stages.map((s) => (<a key={s.id} href={`#${s.id}`}>{s.tag.split("·")[1]?.trim() ?? s.tag}</a>))}
             </nav>
@@ -132,9 +169,13 @@ export default function Home() {
                     <p className="stage-tag">{s.tag}</p>
                     <h3 id={`t-${s.id}`}>{s.title}</h3>
                     <p className="stage-tagline">{s.tagline}</p>
+                    <ul className="stage-meta" aria-label="Resumo">
+                      <li><ClockIcon /> {s.hours[0]}</li>
+                      <li><PinIcon /> {s.unit.name}</li>
+                    </ul>
                   </div>
                   <div className="stage-body">
-                    {s.text.map((p) => (<p key={p}>{p}</p>))}
+                    {s.text.map((t) => (<p key={t}><Rich text={t} /></p>))}
                     <p className="stage-closing">{s.closing}</p>
                     {s.note && <p className="stage-note">{s.note}</p>}
                   </div>
@@ -243,6 +284,9 @@ export default function Home() {
               </p>
               <p className="visit-note">Escolha a unidade da etapa de interesse e fale direto com a equipe pelo WhatsApp.</p>
             </div>
+            <div className="visit-side">
+              <LeadForm />
+              <p className="visit-or">Ou fale direto com a unidade:</p>
             <div className="visit-cards">
               {units.map((u) => (
                 <a key={u.slug} className="visit-card" href={u.wa} target="_blank" rel="noopener noreferrer">
@@ -251,6 +295,7 @@ export default function Home() {
                   <Arrow />
                 </a>
               ))}
+            </div>
             </div>
           </div>
         </section>
@@ -353,14 +398,18 @@ export default function Home() {
         </div>
       </footer>
 
-      <details className="fab">
-        <summary aria-label="Falar pelo WhatsApp"><WaIcon /><span>WhatsApp</span></summary>
-        <div>
-          {units.map((u) => (
-            <a key={u.slug} href={u.wa} target="_blank" rel="noopener noreferrer">{u.name}<small>{u.phone}</small></a>
-          ))}
-        </div>
-      </details>
+      <div className="mbar">
+        <a className="btn btn-primary mbar-cta" href="#visita">Agendar visita</a>
+        <details className="fab">
+          <summary aria-label="Falar pelo WhatsApp"><WaIcon /><span>WhatsApp</span></summary>
+          <div>
+            {units.map((u) => (
+              <a key={u.slug} href={u.wa} target="_blank" rel="noopener noreferrer">{u.name}<small>{u.phone}</small></a>
+            ))}
+          </div>
+        </details>
+      </div>
+      <Enhance />
     </>
   );
 }
